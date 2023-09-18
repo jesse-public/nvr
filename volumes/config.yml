@@ -1,5 +1,5 @@
 cameras:
-  camera_1: # <------ Name the camera
+  camera_1:
     ffmpeg:
       inputs:
         - path: rtsp://admin:testing123@192.168.1.108:554/cam/realmonitor?channel=1&subtype=1 # <----- Update for your camera
@@ -9,5 +9,14 @@ cameras:
     rtmp:
       enabled: False # <-- RTMP should be disabled if your stream is not H264
     detect:
-      width: 1920 # <---- update for your camera's resolution
-      height: 1080 # <---- update for your camera's resolution
+      width: 1920
+      height: 1080
+go2rtc:
+  streams:
+    camera_1:
+      - rtsp://admin:testing123@192.168.1.108:554/live
+  webrtc:
+    candidates:
+      - 192.168.1.100:8555
+      # STUN is only required if exposing through NAT
+      # - stun:8555
