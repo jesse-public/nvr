@@ -3,7 +3,7 @@
 ## Setup
 
 1. Create `.env` (see `.env.example`)
-1. Add cert and key to `volumes/nginx/config/keys`
+1. Add cert and key to `volumes/nginx/config/keys/`
 1. Update site name in `volumes/nginx/config/nginx/site-confs/default.conf`
 1. Update cert paths in `volumes/nginx/config/nginx/ssl.conf`
 
