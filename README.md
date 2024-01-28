@@ -1,15 +1,18 @@
 # nvr
 
-## Additional setup
+## Setup
 
-Ensure the machine is running an NTP server:
+1. Create `.env` (see `.env.example`)
+1. Add cert and key to `volumes/nginx/config/keys`
+1. Update site name in `volumes/nginx/config/nginx/site-confs/default.conf`
+1. Update cert paths in `volumes/nginx/config/nginx/ssl.conf`
 
-```
-sudo apt-get update
-sudo apt-get install ntp
-sudo nano /etc/ntp.conf
-sudo systemctl restart ntp
-ntpq -p
-```
+## NTP server for cameras
 
-Then configure the cameras are configured to refrence the NTP server.
+1. `sudo apt-get update`
+1. `sudo apt-get install ntp`
+1. `sudo nano /etc/ntp.conf` (see `host-machine-files/ntp.conf.example`)
+1. `sudo systemctl restart ntp`
+1. `ntpq -p`
+
+Cameras can then be configured to reference the host's NTP server.
