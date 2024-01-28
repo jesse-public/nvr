@@ -23,3 +23,9 @@ go2rtc:
       - 192.168.1.100:8555
       # STUN is only required if exposing through NAT
       # - stun:8555
+
+# Use PCIe Coral Edge TPU for inference
+detectors:
+  coral1:
+    type: edgetpu
+    device: pci:0
