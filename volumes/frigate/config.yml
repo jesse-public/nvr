@@ -1,3 +1,6 @@
+mqtt:
+  enabled: False
+
 cameras:
   camera_1:
     ffmpeg:

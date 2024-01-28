@@ -22,8 +22,8 @@ services:
       # - /dev/dri/renderD128 # pass GPU for hardware stream decode
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
-      - "./volumes/config.yml:/config/config.yml:ro"
-      - "./volumes/storage:/media/frigate"
+      - "./volumes/frigate/config.yml:/config/config.yml:ro"
+      - "./volumes/frigate/storage:/media/frigate"
       # Optional: 2GB of memory, reduces SSD/SD Card wear
       - type: tmpfs
         target: /tmp/cache
