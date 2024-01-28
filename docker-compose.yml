@@ -49,7 +49,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=America/Chicago
+      - TZ=${TZ}
     volumes:
       - "./volumes/nginx/certs:/certs"
       - "./volumes/nginx/config:/config"
