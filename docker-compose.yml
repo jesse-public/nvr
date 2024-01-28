@@ -1,21 +1,25 @@
 version: "3.7"
 
+# Ensure the host has a static IP.
+# Otherwise, on reboot, DHCP isn't always ready in time for docker to bind to it.
+
 services:
   mqtt:
     image: eclipse-mosquitto:1.6
     restart: unless-stopped
+
   nvr:
     container_name: nvr
     depends_on:
       - mqtt
-    privileged: true # this may not be necessary for all setups
+    # privileged: true # this may not be necessary for all setups
     restart: unless-stopped
     image: ghcr.io/blakeblackshear/frigate:stable
     shm_size: "1024mb" # https://docs.frigate.video/installation#calculating-required-shm-size
     devices:
-      # - /dev/bus/usb:/dev/bus/usb # passes the USB Coral, needs to be modified for other versions
-      - /dev/apex_0:/dev/apex_0 # passes a PCIe Coral, follow driver instructions here https://coral.ai/d>
-      - /dev/dri/renderD128
+      # - /dev/bus/usb:/dev/bus/usb # pass USB Coral, needs to be modified for other versions
+      - /dev/apex_0:/dev/apex_0 # pass PCIe Coral TPU, follow driver instructions here https://coral.ai/d>
+      # - /dev/dri/renderD128 # pass GPU for hardware stream decode
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       - "./volumes/config.yml:/config/config.yml:ro"
@@ -27,14 +31,28 @@ services:
           size: 2000000000
     environment:
       - "FRIGATE_CLIENT_LAN_IP=${FRIGATE_CLIENT_LAN_IP}"
-      - "FRIGATE_RTSP_PASSWORD=password"
+      - "FRIGATE_RTSP_PASSWORD=${FRIGATE_RTSP_PASSWORD}"
       # AMD APU ffmpeg hw acceleration
-      - "FRIGATE_LIBVA_DRIVER_NAME=radeonsi"
-      - "LIBVA_DRIVER_NAME=radeonsi"
+      # - "FRIGATE_LIBVA_DRIVER_NAME=radeonsi"
+      # - "LIBVA_DRIVER_NAME=radeonsi"
     ports:
-      # Needs static, specified IP, otherwise cannot bind to IP on reboot as DHCP is not always ready
-      #- 5000:5000/tcp
       - ${FRIGATE_CLIENT_LAN_IP}:5000:5000/tcp
-      # WebRTC for better live view
+      # Use WebRTC for better live view
       # https://docs.frigate.video/configuration/live/#webrtc-extra-configuration
       - ${FRIGATE_CLIENT_LAN_IP}:8555:8555
+
+  nginx:
+    image: lscr.io/linuxserver/nginx:latest
+    container_name: nvr-nginx
+    depends_on:
+      - nvr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Chicago
+    volumes:
+      - "./volumes/nginx/certs:/certs"
+      - "./volumes/nginx/config:/config"
+    ports:
+      - ${FRIGATE_CLIENT_LAN_IP}:443:443
+    restart: unless-stopped
