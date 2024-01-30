@@ -5,7 +5,7 @@ cameras:
   camera_1:
     ffmpeg:
       inputs:
-        - path: rtsp://admin:testing123@192.168.1.108:554/cam/realmonitor?channel=1&subtype=1 # <----- Update for your camera
+        - path: rtsp://admin:testing123@192.168.50.101:554/cam/realmonitor?channel=1&subtype=1 # <----- Update for your camera
           roles:
             - detect
             - rtmp
@@ -17,10 +17,10 @@ cameras:
 go2rtc:
   streams:
     camera_1:
-      - rtsp://admin:testing123@192.168.1.108:554/live
+      - rtsp://admin:testing123@192.168.50.101:554/live
   webrtc:
     candidates:
-      - 192.168.1.100:8555
+      - 192.168.1.20:8555
       # STUN is only required if exposing through NAT
       # - stun:8555
 
