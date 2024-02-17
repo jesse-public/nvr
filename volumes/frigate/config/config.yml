@@ -1,6 +1,3 @@
-mqtt:
-  enabled: False
-
 cameras:
   camera_1:
     ffmpeg:
@@ -9,12 +6,15 @@ cameras:
           roles:
             - detect
 
-rtmp:
-  enabled: False # <-- RTMP should be disabled if your stream is not H264
-
 detect:
   width: 1920
   height: 1080
+
+# Use PCIe Coral Edge TPU for inference
+detectors:
+  coral1:
+    type: edgetpu
+    device: pci:0
 
 go2rtc:
   streams:
@@ -26,8 +26,40 @@ go2rtc:
       # STUN is only required if exposing through NAT
       # - stun:8555
 
-# Use PCIe Coral Edge TPU for inference
-detectors:
-  coral1:
-    type: edgetpu
-    device: pci:0
+live:
+  height: 960 # 1920 / 2
+  quality: 1
+
+mqtt:
+  enabled: False
+
+record:
+  enabled: True
+  sync_recordings: True
+  retain:
+    days: 0
+  events:
+    retain:
+      default: 90
+      mode: active_objects
+
+rtmp:
+  enabled: False # <-- RTMP should be disabled if your stream is not H264
+
+snapshots:
+  enabled: True
+  clean_copy: True
+  bounding_box: True
+  crop: False
+  retain:
+    default: 90
+    objects:
+      person: 15
+  quality: 100
+
+telemetry:
+  version_check: False
+
+ui:
+  live_mode: webrtc
+  timezone: America/Los_Angeles
