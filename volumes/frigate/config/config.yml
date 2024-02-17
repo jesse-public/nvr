@@ -27,7 +27,7 @@ go2rtc:
       # - stun:8555
 
 live:
-  height: 960 # 1920 / 2
+  height: 1080
   quality: 1
 
 mqtt:
@@ -63,3 +63,5 @@ telemetry:
 ui:
   live_mode: webrtc
   timezone: America/Los_Angeles
+  time_format: 24hour
+  strftime_fmt: "%Y-%m-%d %H:%M"
