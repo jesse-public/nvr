@@ -1,8 +1,3 @@
-version: "3.7"
-
-# Ensure the host has a static IP.
-# Otherwise, on reboot, DHCP isn't always ready in time for docker to bind to it.
-
 services:
   mqtt:
     image: eclipse-mosquitto:1.6
@@ -12,7 +7,6 @@ services:
     container_name: nvr
     depends_on:
       - mqtt
-    # privileged: true # this may not be necessary for all setups
     restart: unless-stopped
     image: ghcr.io/blakeblackshear/frigate:stable
     shm_size: "1024mb" # https://docs.frigate.video/installation#calculating-required-shm-size
@@ -22,24 +16,24 @@ services:
       # - /dev/dri/renderD128 # pass GPU for hardware stream decode
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ./volumes/frigate/config:/config
-      - ./volumes/frigate/storage:/media/frigate
+      - volumes/frigate/config:/config
+      - /mnt/nas-nvr-recordings:/media/frigate
       # Optional: 2GB of memory, reduces SSD/SD Card wear
       - type: tmpfs
         target: /tmp/cache
         tmpfs:
           size: 2000000000
     environment:
-      - "FRIGATE_CLIENT_LAN_IP=${FRIGATE_CLIENT_LAN_IP}"
-      - "FRIGATE_RTSP_PASSWORD=${FRIGATE_RTSP_PASSWORD}"
+      - "FRIGATE_CLIENT_LAN_IP=${CLIENT_IP}"
+      - "FRIGATE_RTSP_PASSWORD=${RTSP_PASSWORD}"
       # AMD APU ffmpeg hw acceleration
       # - "FRIGATE_LIBVA_DRIVER_NAME=radeonsi"
       # - "LIBVA_DRIVER_NAME=radeonsi"
     ports:
-      - ${FRIGATE_CLIENT_LAN_IP}:5000:5000/tcp
+      - ${CLIENT_IP}:5000:5000/tcp
       # Use WebRTC for better live view
       # https://docs.frigate.video/configuration/live/#webrtc-extra-configuration
-      - ${FRIGATE_CLIENT_LAN_IP}:8555:8555
+      - ${CLIENT_IP}:8555:8555
 
   nginx:
     image: lscr.io/linuxserver/nginx:latest
@@ -51,8 +45,7 @@ services:
       - PGID=1000
       - TZ=${TZ}
     volumes:
-      - ./volumes/nginx/certs:/certs
-      - ./volumes/nginx/config:/config
+      - volumes/nginx/config:/config
     ports:
-      - ${FRIGATE_CLIENT_LAN_IP}:443:443
+      - ${CLIENT_IP}:443:443
     restart: unless-stopped
