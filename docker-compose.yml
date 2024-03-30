@@ -15,8 +15,8 @@ services:
       - /dev/apex_0:/dev/apex_0 # pass PCIe Coral TPU, follow driver instructions here https://coral.ai/d>
       # - /dev/dri/renderD128 # pass GPU for hardware stream decode
     volumes:
+      - ./volumes/frigate/config:/config
       - /etc/localtime:/etc/localtime:ro
-      - volumes/frigate/config:/config
       - /mnt/nas-nvr-recordings:/media/frigate
       # Optional: 2GB of memory, reduces SSD/SD Card wear
       - type: tmpfs
@@ -45,7 +45,7 @@ services:
       - PGID=1000
       - TZ=${TZ}
     volumes:
-      - volumes/nginx/config:/config
+      - ./volumes/nginx/config:/config
     ports:
       - ${CLIENT_IP}:443:443
     restart: unless-stopped
