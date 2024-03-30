@@ -1,3 +1,9 @@
+birdseye:
+  mode: continuous
+  width: 1920
+  height: 1080
+  quality: 1
+
 cameras:
   camera_1:
     ffmpeg:
@@ -22,7 +28,7 @@ go2rtc:
       - rtsp://admin:testing123@192.168.50.101:554/live
   webrtc:
     candidates:
-      - 192.168.1.20:8555
+      - 192.168.0.20:8555
       # STUN is only required if exposing through NAT
       # - stun:8555
 
@@ -33,10 +39,23 @@ live:
 mqtt:
   enabled: False
 
+objects:
+  track:
+    - person
+    - car
+    - bird
+    - cat
+    - dog
+    - horse
+    - sheep
+    - cow
+
 record:
   enabled: True
   sync_recordings: True
   retain:
+    # NOTE: This should be set to 0 and retention should be defined in events section below
+    #       if you only want to retain recordings of events.
     days: 0
   events:
     retain:
