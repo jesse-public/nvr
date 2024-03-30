@@ -1,3 +1,4 @@
+.env
 volumes
 !volumes/frigate/config/config.yml
 !volumes/nginx/config/keys/*.example
