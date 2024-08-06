@@ -11,6 +11,9 @@ cameras:
         - path: rtsp://admin:testing123@192.168.50.101:554/cam/realmonitor?channel=1&subtype=1
           roles:
             - detect
+        - path: rtsp://admin:testing123@192.168.50.101:554/live
+          roles:
+            - record
 
 detect:
   width: 1920
