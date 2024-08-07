@@ -3,6 +3,7 @@ birdseye:
   width: 1920
   height: 1080
   quality: 1
+  restream: True
 
 cameras:
   camera_1:
@@ -38,6 +39,9 @@ go2rtc:
 live:
   height: 1080
   quality: 1
+
+motion:
+  threshold: 15
 
 mqtt:
   enabled: False

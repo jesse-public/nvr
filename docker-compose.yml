@@ -1,5 +1,6 @@
 services:
   mqtt:
+    container_name: mqtt
     image: eclipse-mosquitto:1.6
     restart: unless-stopped
 
@@ -39,7 +40,7 @@ services:
 
   nginx:
     image: lscr.io/linuxserver/nginx:latest
-    container_name: nvr-nginx
+    container_name: nvr-reverse-proxy
     depends_on:
       - nvr
     environment:
