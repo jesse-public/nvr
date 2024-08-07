@@ -31,6 +31,8 @@ services:
       # - "LIBVA_DRIVER_NAME=radeonsi"
     ports:
       - ${CLIENT_IP}:5000:5000/tcp
+      # Restream
+      - ${CLIENT_IP}:8554:8554
       # Use WebRTC for better live view
       # https://docs.frigate.video/configuration/live/#webrtc-extra-configuration
       - ${CLIENT_IP}:8555:8555
