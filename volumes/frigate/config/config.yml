@@ -69,9 +69,6 @@ record:
       default: 90
       mode: active_objects
 
-rtmp:
-  enabled: false # <-- RTMP should be disabled if your stream is not H264
-
 snapshots:
   enabled: true
   clean_copy: true
