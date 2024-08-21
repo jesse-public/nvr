@@ -3,7 +3,7 @@ birdseye:
   width: 1920
   height: 1080
   quality: 1
-  restream: True
+  restream: true
 
 cameras:
   camera_1:
@@ -44,7 +44,7 @@ motion:
   threshold: 15
 
 mqtt:
-  enabled: False
+  enabled: false
 
 objects:
   track:
@@ -58,8 +58,8 @@ objects:
     - cow
 
 record:
-  enabled: True
-  sync_recordings: True
+  enabled: true
+  sync_recordings: true
   retain:
     # NOTE: This should be set to 0 and retention should be defined in events section below
     #       if you only want to retain recordings of events.
@@ -70,24 +70,26 @@ record:
       mode: active_objects
 
 rtmp:
-  enabled: False # <-- RTMP should be disabled if your stream is not H264
+  enabled: false # <-- RTMP should be disabled if your stream is not H264
 
 snapshots:
-  enabled: True
-  clean_copy: True
-  bounding_box: True
-  crop: False
+  enabled: true
+  clean_copy: true
+  bounding_box: true
+  crop: false
   retain:
     default: 90
     objects:
-      person: 15
+      person: 45
   quality: 100
 
 telemetry:
-  version_check: False
+  version_check: false
 
 ui:
   live_mode: webrtc
   timezone: America/Los_Angeles
   time_format: 24hour
   strftime_fmt: "%Y-%m-%d %H:%M"
+
+version: 0.14
