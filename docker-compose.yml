@@ -10,7 +10,7 @@ services:
       - mqtt
     restart: unless-stopped
     image: ghcr.io/blakeblackshear/frigate:stable
-    shm_size: "1024mb" # https://docs.frigate.video/installation#calculating-required-shm-size
+    shm_size: "1024mb" # https://docs.frigate.video/frigate/installation/#calculating-required-shm-size
     devices:
       # - /dev/bus/usb:/dev/bus/usb # pass USB Coral, needs to be modified for other versions
       - /dev/apex_0:/dev/apex_0 # pass PCIe Coral TPU, follow driver instructions here https://coral.ai/d>
@@ -21,11 +21,11 @@ services:
       - ./volumes/frigate/db:/db
       - /etc/localtime:/etc/localtime:ro
       - /mnt/nas-nvr-recordings:/media/frigate
-      # Optional: 2GB of memory, reduces SSD/SD Card wear
+      # Optional: 4GB of memory, reduces SSD/SD Card wear
       - type: tmpfs
         target: /tmp/cache
         tmpfs:
-          size: 2000000000
+          size: 4000000000
     environment:
       - "FRIGATE_CLIENT_LAN_IP=${CLIENT_IP}"
       - "FRIGATE_RTSP_PASSWORD=${RTSP_PASSWORD}"
