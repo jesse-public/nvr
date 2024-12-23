@@ -11,6 +11,9 @@ cameras:
     ui:
       order: 1
 
+database:
+  path: /db/frigate.db
+
 # Use PCIe Coral Edge TPU for inference
 detectors:
   coral1:
@@ -26,10 +29,6 @@ go2rtc:
       - 192.168.0.20:8555
       # STUN is only required if exposing through NAT
       # - stun:8555
-
-live:
-  height: 1080
-  quality: 1
 
 motion:
   threshold: 15
@@ -73,6 +72,10 @@ snapshots:
 
 telemetry:
   version_check: false
+
+timestamp_style:
+  format: '%Y-%m-%d %H:%M'
+  effect: 'solid'
 
 ui:
   timezone: America/Los_Angeles
