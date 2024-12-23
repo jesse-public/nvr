@@ -73,10 +73,6 @@ snapshots:
 telemetry:
   version_check: false
 
-timestamp_style:
-  format: '%Y-%m-%d %H:%M'
-  effect: 'solid'
-
 ui:
   timezone: America/Los_Angeles
   time_format: 24hour
