@@ -1,24 +1,15 @@
-birdseye:
-  mode: continuous
-  width: 1920
-  height: 1080
-  quality: 1
-  restream: true
-
 cameras:
   camera_1:
     ffmpeg:
       inputs:
-        - path: rtsp://admin:testing123@192.168.50.101:554/cam/realmonitor?channel=1&subtype=1
+        - path: rtsp://admin:testing123@192.168.50.101:554/cam/realmonitor?channel=1&subtype=2
           roles:
             - detect
         - path: rtsp://127.0.0.1:8554/camera_1
           roles:
             - record
-
-detect:
-  width: 1920
-  height: 1080
+    ui:
+      order: 1
 
 # Use PCIe Coral Edge TPU for inference
 detectors:
@@ -84,9 +75,8 @@ telemetry:
   version_check: false
 
 ui:
-  live_mode: webrtc
   timezone: America/Los_Angeles
   time_format: 24hour
-  strftime_fmt: "%Y-%m-%d %H:%M"
+  strftime_fmt: '%Y-%m-%d %H:%M'
 
 version: 0.14
