@@ -36,7 +36,7 @@ RequiresMountsFor=/mnt/nas-nvr-recordings
 
 1. `sudo apt-get update`
 1. `sudo apt-get install ntp`
-1. `sudo nano /etc/ntp.conf` (see `host-machine-files/ntp.conf.example`)
+1. Edit ntp conf if desired `sudo nano /etc/ntp.conf`
 1. `sudo systemctl restart ntp`
 1. `ntpq -p`
 

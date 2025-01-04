@@ -31,7 +31,7 @@ go2rtc:
       # - stun:8555
 
 motion:
-  threshold: 15
+  threshold: 30
 
 mqtt:
   enabled: false
