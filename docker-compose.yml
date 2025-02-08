@@ -1,7 +1,14 @@
 services:
+  # MQTT broker
+  # Used for Frigate messages
+  # Only exposed on MQTT VLAN
   mqtt:
     container_name: mqtt
-    image: eclipse-mosquitto:1.6
+    image: eclipse-mosquitto:2.0-openssl
+    volumes:
+      - ./volumes/mosquitto:/mosquitto
+    ports:
+      - ${CLIENT_MQTT_LAN_IP}:1883:1883
     restart: unless-stopped
 
   nvr:
@@ -33,7 +40,7 @@ services:
       # - "FRIGATE_LIBVA_DRIVER_NAME=radeonsi"
       # - "LIBVA_DRIVER_NAME=radeonsi"
     ports:
-      - ${CLIENT_IP}:5000:5000/tcp
+      # - ${CLIENT_IP}:5000:5000/tcp
       # Restream
       - ${CLIENT_IP}:8554:8554
       # Use WebRTC for better live view
