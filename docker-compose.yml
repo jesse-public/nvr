@@ -34,6 +34,9 @@ services:
     environment:
       - "FRIGATE_CLIENT_LAN_IP=${CLIENT_IP}"
       - "FRIGATE_RTSP_PASSWORD=${RTSP_PASSWORD}"
+      - "FRIGATE_MQTT_IP=${CLIENT_MQTT_LAN_IP}"
+      - "FRIGATE_MQTT_USER=${MQTT_USER}"
+      - "FRIGATE_MQTT_PASSWORD=${MQTT_PASSWORD}"
       # AMD APU ffmpeg hw acceleration
       # - "FRIGATE_LIBVA_DRIVER_NAME=radeonsi"
       # - "LIBVA_DRIVER_NAME=radeonsi"
