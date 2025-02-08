@@ -35,8 +35,8 @@ motion:
 
 mqtt:
   enabled: true
-  host: '{FRIGATE_MQTT_IP}'
-  port: 1883
+  host: {FRIGATE_MQTT_HOST}
+  port: 11883
   topic_prefix: frigate
   client_id: frigate
   user: '{FRIGATE_MQTT_USER}'
