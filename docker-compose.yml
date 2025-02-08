@@ -13,6 +13,8 @@ services:
 
   nvr:
     container_name: nvr
+    depends_on:
+      - mqtt
     restart: unless-stopped
     image: ghcr.io/blakeblackshear/frigate:stable
     shm_size: "1024mb" # https://docs.frigate.video/frigate/installation/#calculating-required-shm-size
