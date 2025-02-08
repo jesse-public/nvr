@@ -34,7 +34,13 @@ motion:
   threshold: 30
 
 mqtt:
-  enabled: false
+  enabled: true
+  host: '{FRIGATE_MQTT_IP}'
+  port: 1883
+  topic_prefix: frigate
+  client_id: frigate
+  user: '{FRIGATE_MQTT_USER}'
+  password: '{FRIGATE_MQTT_PASSWORD}'
 
 objects:
   track:
