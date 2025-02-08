@@ -41,3 +41,29 @@ RequiresMountsFor=/mnt/nas-nvr-recordings
 1. `ntpq -p`
 
 Cameras can then be configured to reference the host's NTP server.
+
+### MQTT
+
+Create passwords for the MQTT users:
+
+Temporarily update `mosquitto.conf` to contain:
+
+```
+allow_anonymous true
+listener 1883 0.0.0.0
+```
+
+1. `docker-compose up -d`
+1. `docker exec -it -u 1883 mqtt sh`
+1. `mosquitto_passwd -c /mosquitto/passwd_file user_name`
+1. `mosquitto_passwd -b /mosquitto/passwd_file second_user_name password`
+
+Restore the original `mosquitto.conf` contents:
+
+```
+password_file /mosquitto/passwd_file
+allow_anonymous false
+listener 1883 0.0.0.0
+```
+
+1. `docker container <mqtt container id> restart`
