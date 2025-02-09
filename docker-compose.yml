@@ -1,21 +1,18 @@
 services:
-  # MQTT broker
-  # Used for Frigate messages
-  # Only exposed on MQTT VLAN
   mqtt:
     container_name: mqtt
     image: eclipse-mosquitto:2.0-openssl
     volumes:
       - ./volumes/mosquitto:/mosquitto
     ports:
-      - ${CLIENT_MQTT_IP}:11883:1883
+      # Only expose on frigate-ha-integration VLAN
+      - ${HA_INTEGRATION_IP}:11883:1883
     restart: unless-stopped
 
   nvr:
     container_name: nvr
     depends_on:
       - mqtt
-    restart: unless-stopped
     image: ghcr.io/blakeblackshear/frigate:stable
     shm_size: "1024mb" # https://docs.frigate.video/frigate/installation/#calculating-required-shm-size
     devices:
@@ -42,12 +39,17 @@ services:
       # - "FRIGATE_LIBVA_DRIVER_NAME=radeonsi"
       # - "LIBVA_DRIVER_NAME=radeonsi"
     ports:
-      # - ${CLIENT_IP}:5000:5000/tcp
-      # Restream
-      # - ${CLIENT_IP}:8554:8554
+      # The Frigate Home Assistant Integration requires port 5000
+      # https://github.com/blakeblackshear/frigate-hass-integration
+      # Hypervisors/firewalls must allow this port between HA and NVR frigate-ha-integration VLAN IPs
+      # Only expose on frigate-ha-integration VLAN
+      - ${HA_INTEGRATION_IP}:5000:5000/tcp
+      # Port 8554 does not seem to be required for the Frigate Home Assistant Integration
+      # - ${HA_INTEGRATION_IP}:8554:8554
       # Use WebRTC for better live view
       # https://docs.frigate.video/configuration/live/#webrtc-extra-configuration
       - ${CLIENT_IP}:8555:8555
+    restart: unless-stopped
 
   nginx:
     image: lscr.io/linuxserver/nginx:latest

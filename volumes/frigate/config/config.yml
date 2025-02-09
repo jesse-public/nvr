@@ -35,6 +35,8 @@ motion:
 
 mqtt:
   enabled: true
+  # Frigate does not support using an env variable for `host`,
+  # so it must be manually set to the value of `HA_INTEGRATION_IP`.
   host: 192.168.5.20
   port: 11883
   topic_prefix: frigate
