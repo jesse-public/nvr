@@ -23,7 +23,6 @@ services:
       - ./volumes/frigate/config:/config
       # Do not store DB on NFS mount
       - ./volumes/frigate/db:/db
-      - /etc/localtime:/etc/localtime:ro
       - /mnt/nas-nvr-recordings:/media/frigate
       # Optional: 4GB of memory, reduces SSD/SD Card wear
       - type: tmpfs
@@ -35,6 +34,7 @@ services:
       - "FRIGATE_RTSP_PASSWORD=${RTSP_PASSWORD}"
       - "FRIGATE_MQTT_USER=${MQTT_USER}"
       - "FRIGATE_MQTT_PASSWORD=${MQTT_PASSWORD}"
+      - TZ
       # AMD APU ffmpeg hw acceleration
       # - "FRIGATE_LIBVA_DRIVER_NAME=radeonsi"
       # - "LIBVA_DRIVER_NAME=radeonsi"
@@ -59,7 +59,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=${TZ}
+      - TZ
     volumes:
       - ./volumes/nginx/config:/config
     ports:
