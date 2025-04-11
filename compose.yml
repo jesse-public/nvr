@@ -1,3 +1,11 @@
+secrets:
+  FRIGATE_MQTT_PASSWORD:
+    file: ./secrets/FRIGATE_MQTT_PASSWORD
+  FRIGATE_MQTT_USER:
+    file: ./secrets/FRIGATE_MQTT_USER
+  FRIGATE_RTSP_PASSWORD:
+    file: ./secrets/FRIGATE_RTSP_PASSWORD
+
 services:
   mqtt:
     container_name: mqtt
@@ -7,48 +15,6 @@ services:
     ports:
       # Only expose on frigate-ha-integration VLAN
       - ${HA_INTEGRATION_IP}:11883:1883
-    restart: unless-stopped
-
-  nvr:
-    container_name: nvr
-    depends_on:
-      - mqtt
-    image: ghcr.io/blakeblackshear/frigate:stable
-    shm_size: "1024mb" # https://docs.frigate.video/frigate/installation/#calculating-required-shm-size
-    devices:
-      # - /dev/bus/usb:/dev/bus/usb # pass USB Coral, needs to be modified for other versions
-      - /dev/apex_0:/dev/apex_0 # pass PCIe Coral TPU, follow driver instructions here https://coral.ai/d>
-      # - /dev/dri/renderD128 # pass GPU for hardware stream decode
-    volumes:
-      - ./volumes/frigate/config:/config
-      # Do not store DB on NFS mount
-      - ./volumes/frigate/db:/db
-      - /mnt/nas-nvr-recordings:/media/frigate
-      # Optional: 4GB of memory, reduces SSD/SD Card wear
-      - type: tmpfs
-        target: /tmp/cache
-        tmpfs:
-          size: 4000000000
-    environment:
-      - "FRIGATE_CLIENT_LAN_IP=${CLIENT_IP}"
-      - "FRIGATE_RTSP_PASSWORD=${RTSP_PASSWORD}"
-      - "FRIGATE_MQTT_USER=${MQTT_USER}"
-      - "FRIGATE_MQTT_PASSWORD=${MQTT_PASSWORD}"
-      - TZ
-      # AMD APU ffmpeg hw acceleration
-      # - "FRIGATE_LIBVA_DRIVER_NAME=radeonsi"
-      # - "LIBVA_DRIVER_NAME=radeonsi"
-    ports:
-      # The Frigate Home Assistant Integration requires port 5000
-      # https://github.com/blakeblackshear/frigate-hass-integration
-      # Hypervisors/firewalls must allow this port between HA and NVR frigate-ha-integration VLAN IPs
-      # Only expose on frigate-ha-integration VLAN
-      - ${HA_INTEGRATION_IP}:5000:5000/tcp
-      # Port 8554 does not seem to be required for the Frigate Home Assistant Integration
-      # - ${HA_INTEGRATION_IP}:8554:8554
-      # Use WebRTC for better live view
-      # https://docs.frigate.video/configuration/live/#webrtc-extra-configuration
-      - ${CLIENT_IP}:8555:8555
     restart: unless-stopped
 
   nginx:
@@ -64,4 +30,47 @@ services:
       - ./volumes/nginx/config:/config
     ports:
       - ${CLIENT_IP}:443:443
+    restart: unless-stopped
+
+  nvr:
+    container_name: nvr
+    depends_on:
+      - mqtt
+    image: ghcr.io/blakeblackshear/frigate:stable
+    shm_size: "1024mb" # https://docs.frigate.video/frigate/installation/#calculating-required-shm-size
+    devices:
+      # - /dev/bus/usb:/dev/bus/usb # pass USB Coral, needs to be modified for other versions
+      - /dev/apex_0:/dev/apex_0 # pass PCIe Coral TPU, follow driver instructions here https://coral.ai/d>
+      # - /dev/dri/renderD128 # pass GPU for hardware stream decode
+    secrets:
+      - FRIGATE_MQTT_PASSWORD
+      - FRIGATE_MQTT_USER
+      - FRIGATE_RTSP_PASSWORD
+    volumes:
+      - ./volumes/frigate/config:/config
+      # Do not store DB on NFS mount
+      - ./volumes/frigate/db:/db
+      - /mnt/nas-nvr-recordings:/media/frigate
+      # Optional: 4GB of memory, reduces SSD/SD Card wear
+      - type: tmpfs
+        target: /tmp/cache
+        tmpfs:
+          size: 4000000000
+    environment:
+      - "FRIGATE_CLIENT_LAN_IP=${CLIENT_IP}"
+      - TZ
+      # AMD APU ffmpeg hw acceleration
+      # - "FRIGATE_LIBVA_DRIVER_NAME=radeonsi"
+      # - "LIBVA_DRIVER_NAME=radeonsi"
+    ports:
+      # The Frigate Home Assistant Integration requires port 5000
+      # https://github.com/blakeblackshear/frigate-hass-integration
+      # Hypervisors/firewalls must allow this port between HA and NVR frigate-ha-integration VLAN IPs
+      # Only expose on frigate-ha-integration VLAN
+      - ${HA_INTEGRATION_IP}:5000:5000/tcp
+      # Port 8554 does not seem to be required for the Frigate Home Assistant Integration
+      # - ${HA_INTEGRATION_IP}:8554:8554
+      # Use WebRTC for better live view
+      # https://docs.frigate.video/configuration/live/#webrtc-extra-configuration
+      - ${CLIENT_IP}:8555:8555
     restart: unless-stopped
