@@ -6,6 +6,11 @@
 1. Add cert and key to `volumes/nginx/config/keys/`
 1. Update site name in `volumes/nginx/config/nginx/site-confs/default.conf`
 1. Update cert paths in `volumes/nginx/config/nginx/ssl.conf`
+1. git clone https://github.com/jnicolson/gasket-builder
+1. cd gasket-builder
+1. docker build --output . .
+1. sudo dpkg -i gasket-dkms_1.0-18_all.deb
+1. sudo reboot now
 
 ### NAS storage
 
