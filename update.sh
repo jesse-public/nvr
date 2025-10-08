@@ -2,4 +2,5 @@
 
 docker compose down
 docker compose pull
-docker compose up -d
+docker image prune -f
+COMPOSE_BAKE=true docker compose up --build -d
