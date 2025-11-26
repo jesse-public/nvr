@@ -1,4 +1,5 @@
 volumes
+!volumes/caddy
 !volumes/frigate/config/config.yml
 !volumes/mosquitto/config/mosquitto.conf
 !volumes/nginx/config/keys/*.example
