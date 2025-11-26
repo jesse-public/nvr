@@ -65,7 +65,7 @@ services:
     image: ghcr.io/blakeblackshear/frigate:stable
     shm_size: "1024mb" # https://docs.frigate.video/frigate/installation/#calculating-required-shm-size
     devices:
-      - /dev/apex_0:/dev/apex_0 # pass PCIe Coral TPU, follow driver instructions here https://coral.ai/d>
+      - /dev/apex_0:/dev/apex_0 # pass PCIe Coral TPU
       # - /dev/dri/renderD128 # pass GPU for hardware stream decode
     secrets:
       - FRIGATE_MQTT_PASSWORD
