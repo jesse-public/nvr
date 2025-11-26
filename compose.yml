@@ -1,12 +1,38 @@
 secrets:
+  cf_api_token:
+    file: ./secrets/cf_api_token
+  cf_zone_token:
+    file: ./secrets/cf_zone_token
   FRIGATE_MQTT_PASSWORD:
     file: ./secrets/FRIGATE_MQTT_PASSWORD
   FRIGATE_MQTT_USER:
     file: ./secrets/FRIGATE_MQTT_USER
   FRIGATE_RTSP_PASSWORD:
     file: ./secrets/FRIGATE_RTSP_PASSWORD
+  oauth2_proxy_client_secret:
+    file: ./secrets/oauth2_proxy_client_secret
+  oauth2_proxy_cookie_secret:
+    file: ./secrets/oauth2_proxy_cookie_secret
 
 services:
+  caddy:
+    # Use custom dockerfile to build with required dns module
+    build: ./caddy
+    container_name: caddy
+    depends_on:
+      - nvr
+    secrets:
+      - cf_api_token
+      - cf_zone_token
+    volumes:
+      - ./volumes/caddy/caddy_config:/config
+      - ./volumes/caddy/caddy_data:/data
+      - ./volumes/caddy/conf:/etc/caddy
+      - ./volumes/caddy/site:/srv
+    ports:
+      - ${CLIENT_IP}:443:443/tcp
+    restart: unless-stopped
+
   mqtt:
     container_name: mqtt
     image: eclipse-mosquitto:2.0-openssl
@@ -17,20 +43,20 @@ services:
       - ${HA_INTEGRATION_IP}:11883:1883
     restart: unless-stopped
 
-  nginx:
-    image: lscr.io/linuxserver/nginx:latest
-    container_name: nvr-reverse-proxy
-    depends_on:
-      - nvr
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ
-    volumes:
-      - ./volumes/nginx/config:/config
-    ports:
-      - ${CLIENT_IP}:443:443
-    restart: unless-stopped
+  # nginx:
+  #   image: lscr.io/linuxserver/nginx:latest
+  #   container_name: nvr-reverse-proxy
+  #   depends_on:
+  #     - nvr
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - TZ
+  #   volumes:
+  #     - ./volumes/nginx/config:/config
+  #   ports:
+  #     - ${CLIENT_IP}:443:443
+  #   restart: unless-stopped
 
   nvr:
     container_name: nvr
@@ -39,7 +65,6 @@ services:
     image: ghcr.io/blakeblackshear/frigate:stable
     shm_size: "1024mb" # https://docs.frigate.video/frigate/installation/#calculating-required-shm-size
     devices:
-      # - /dev/bus/usb:/dev/bus/usb # pass USB Coral, needs to be modified for other versions
       - /dev/apex_0:/dev/apex_0 # pass PCIe Coral TPU, follow driver instructions here https://coral.ai/d>
       # - /dev/dri/renderD128 # pass GPU for hardware stream decode
     secrets:
@@ -74,3 +99,35 @@ services:
       # https://docs.frigate.video/configuration/live/#webrtc-extra-configuration
       - ${CLIENT_IP}:8555:8555
     restart: unless-stopped
+
+  oauth2-proxy:
+    image: quay.io/oauth2-proxy/oauth2-proxy:latest
+    # If command doesn't work, OAUTH2_PROXY_EMAIL_DOMAINS may not be working.
+    # Instead use this:
+    # command: "oauth2-proxy --email-domain=*"
+    command: "oauth2-proxy"
+    # https://oauth2-proxy.github.io/oauth2-proxy/configuration/overview?_highlight=envir#environment-variables
+    environment:
+      # These variables taken from:
+      # https://pocket-id.org/docs/guides/proxy-services#oauth2-proxy
+      - OAUTH2_PROXY_CLIENT_ID
+      - OAUTH2_PROXY_CLIENT_SECRET_FILE=/run/secrets/oauth2_proxy_client_secret
+      - "OAUTH2_PROXY_OIDC_ISSUER_URL=https://${IDP_HOST}/.well-known/openid-configuration"
+      # Generate a secret with `openssl rand -base64 32`
+      - OAUTH2_PROXY_COOKIE_SECRET_FILE=/run/secrets/oauth2_proxy_cookie_secret
+      - OAUTH2_PROXY_UPSTREAMS=http://nvr:5000
+      - OAUTH2_PROXY_PROVIDER=oidc
+      - OAUTH2_PROXY_SCOPES=openid email profile groups
+      - OAUTH2_PROXY_REVERSE_PROXY=true
+      - OAUTH2_PROXY_EMAIL_DOMAINS=*
+      - OAUTH2_PROXY_COOKIE_SECURE=true
+      - OAUTH2_PROXY_COOKIE_NAME=__Host-oauth2-proxy
+
+      # These variables taken from:
+      # https://colby.gg/posts/2024-12-7-sso-oidc-caddy-services/
+      - "OAUTH2_PROXY_REDIRECT_URL=https://${NVR_HOST}/oauth2/callback"
+      - "OAUTH2_PROXY_COOKIE_DOMAINS=${NVR_HOST}"
+      - "OAUTH2_PROXY_WHITELIST_DOMAINS=${NVR_HOST}"
+      - OAUTH2_PROXY_HTTP_ADDRESS=0.0.0.0:4180
+      - OAUTH2_PROXY_SKIP_PROVIDER_BUTTON=true
+      - OAUTH2_PROXY_CODE_CHALLENGE_METHOD=S256
